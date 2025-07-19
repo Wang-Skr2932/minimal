@@ -1,85 +1,66 @@
-def calculate_dose(weight):
-    drugs = [
-        {
+# -*- coding: utf-8 -*-
+# โปรแกรมคำนวณปริมาณยาน้ำสำหรับเด็ก
+
+def calculate_dose_mg(weight_kg, dose_per_kg_mg):
+    return weight_kg * dose_per_kg_mg
+
+def calculate_volume_ml(dose_mg, concentration_mg_per_ml):
+    return dose_mg / concentration_mg_per_ml
+
+def get_drug_info(choice):
+    drug_data = {
+        "1": {
             "name": "Paracetamol",
-            "min_dose": 10,
-            "max_dose": 15,
-            "concentration": 120,
-            "unit": "mg/kg/dose",
-            "frequency": 4
+            "dose_per_kg": 15,           # 10–15 mg/kg/ครั้ง
+            "concentration": 24          # 120mg/5ml = 24mg/ml
         },
-        {
-            "name": "CPM-SYR 2MG/5ML",
-            "min_dose": 0.1,
-            "max_dose": 0.35,
-            "concentration": 2,
-            "unit": "mg/kg/day",
-            "frequency": 3
+        "2": {
+            "name": "CPM (Chlorpheniramine)",
+            "dose_per_kg": 0.35,         # mg/kg/วัน แบ่ง 3 ครั้ง
+            "concentration": 0.4         # 2mg/5ml = 0.4mg/ml
         },
-        {
-            "name": "Carbocysteine-SYR 250MG/5ML",
-            "min_dose": 10,
-            "max_dose": 20,
-            "concentration": 250,
-            "unit": "mg/kg/day",
-            "frequency": 3
+        "3": {
+            "name": "Azithromycin",
+            "dose_per_kg": 10,           # 10 mg/kg/วัน
+            "concentration": 40          # 200mg/5ml = 40mg/ml
         },
-        {
-            "name": "Salbutamol EXP.SYR",
-            "min_dose": 0.1,
-            "max_dose": 0.15,
-            "concentration": 2,
-            "unit": "mg/kg/dose",
-            "frequency": 3
+        "4": {
+            "name": "Carbocysteine",
+            "dose_per_kg": 10,           # 10 mg/kg/ครั้ง
+            "concentration": 50          # 250mg/5ml = 50mg/ml
         },
-        {
-            "name": "Azithromycin SYR 200MG/5ML",
-            "min_dose": 10,
-            "max_dose": 10,
-            "concentration": 200,
-            "unit": "mg/kg/day",
-            "frequency": 1
-        },
-        {
-            "name": "Glyceryl Guaiacolate",
-            "min_dose": 5,
-            "max_dose": 10,
-            "concentration": 100,
-            "unit": "mg/kg/dose",
-            "frequency": 3
+        "5": {
+            "name": "Guaifenesin (Glyceryl Guaiacolate)",
+            "dose_per_kg": 6.6,          # ประมาณ 6.6 mg/kg/ครั้ง
+            "concentration": 20          # 100mg/5ml = 20mg/ml
         }
-    ]
+    }
+    return drug_data.get(choice)
 
-    print("\n=== �ӹǳ��Ҵ����� ===")
-    print("���˹ѡ���: {:.2f} ���š���\n".format(weight))
+# เริ่มโปรแกรม
+print("=== โปรแกรมคำนวณยาน้ำสำหรับเด็ก ===")
+print("เลือกยาที่ต้องการคำนวณ:")
+print("1. Paracetamol")
+print("2. CPM (Chlorpheniramine)")
+print("3. Azithromycin")
+print("4. Carbocysteine")
+print("5. Guaifenesin (Glyceryl Guaiacolate)")
 
-    for drug in drugs:
-        freq = drug["frequency"]
-        min_mg_total = drug["min_dose"] * weight
-        max_mg_total = drug["max_dose"] * weight
+choice = input("กรุณาเลือกหมายเลขยา (1-5): ")
+drug = get_drug_info(choice)
 
-        # ����繢�Ҵ �����ѹ� ��ͧ��ô��¨ӹǹ����
-        if "day" in drug["unit"]:
-            min_mg_per_dose = min_mg_total / freq
-            max_mg_per_dose = max_mg_total / freq
-        else:
-            min_mg_per_dose = min_mg_total
-            max_mg_per_dose = max_mg_total
+if not drug:
+    print("เลือกไม่ถูกต้อง")
+else:
+    try:
+        weight = float(input("ใส่น้ำหนักเด็ก (กิโลกรัม): "))
 
-        min_ml = (min_mg_per_dose / drug["concentration"]) * 5
-        max_ml = (max_mg_per_dose / drug["concentration"]) * 5
+        dose_mg = calculate_dose_mg(weight, drug["dose_per_kg"])
+        volume_ml = calculate_volume_ml(dose_mg, drug["concentration"])
 
-        print("��: {}".format(drug["name"]))
-        print("  ˹��¢�Ҵ��: {}".format(drug["unit"]))
-        print("  �������: {} ����/�ѹ".format(freq))
-        print("  ? ��Ҵ����ش�������: {:.2f} mg ? {:.2f} ml".format(min_mg_per_dose, min_ml))
-        print("  ? ��Ҵ�٧�ش�������: {:.2f} mg ? {:.2f} ml".format(max_mg_per_dose, max_ml))
-        print("-" * 60)
+        print("\nยาที่เลือก: {}".format(drug["name"]))
+        print("ขนาดยา: {:.2f} mg".format(dose_mg))
+        print("ปริมาณที่ควรให้: {:.2f} ml".format(volume_ml))
 
-
-# ���¡��ҹ
-try:
-    weight_kg = float(input("��س������˹ѡ����� (kg): "))
-    calculate_dose(weight_kg)
-except ValueError:
-    print("��س������˹ѡ�繵���Ţ �� 12.5")
+    except ValueError:
+        print("กรุณากรอกน้ำหนักเป็นตัวเลข")
