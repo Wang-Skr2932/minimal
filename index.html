@@ -1,0 +1,85 @@
+def calculate_dose(weight):
+    drugs = [
+        {
+            "name": "Paracetamol",
+            "min_dose": 10,
+            "max_dose": 15,
+            "concentration": 120,
+            "unit": "mg/kg/dose",
+            "frequency": 4
+        },
+        {
+            "name": "CPM-SYR 2MG/5ML",
+            "min_dose": 0.1,
+            "max_dose": 0.35,
+            "concentration": 2,
+            "unit": "mg/kg/day",
+            "frequency": 3
+        },
+        {
+            "name": "Carbocysteine-SYR 250MG/5ML",
+            "min_dose": 10,
+            "max_dose": 20,
+            "concentration": 250,
+            "unit": "mg/kg/day",
+            "frequency": 3
+        },
+        {
+            "name": "Salbutamol EXP.SYR",
+            "min_dose": 0.1,
+            "max_dose": 0.15,
+            "concentration": 2,
+            "unit": "mg/kg/dose",
+            "frequency": 3
+        },
+        {
+            "name": "Azithromycin SYR 200MG/5ML",
+            "min_dose": 10,
+            "max_dose": 10,
+            "concentration": 200,
+            "unit": "mg/kg/day",
+            "frequency": 1
+        },
+        {
+            "name": "Glyceryl Guaiacolate",
+            "min_dose": 5,
+            "max_dose": 10,
+            "concentration": 100,
+            "unit": "mg/kg/dose",
+            "frequency": 3
+        }
+    ]
+
+    print("\n=== คำนวณขนาดยาในเด็ก ===")
+    print("น้ำหนักตัว: {:.2f} กิโลกรัม\n".format(weight))
+
+    for drug in drugs:
+        freq = drug["frequency"]
+        min_mg_total = drug["min_dose"] * weight
+        max_mg_total = drug["max_dose"] * weight
+
+        # ถ้าเป็นขนาด “ต่อวัน” ต้องหารด้วยจำนวนมื้อ
+        if "day" in drug["unit"]:
+            min_mg_per_dose = min_mg_total / freq
+            max_mg_per_dose = max_mg_total / freq
+        else:
+            min_mg_per_dose = min_mg_total
+            max_mg_per_dose = max_mg_total
+
+        min_ml = (min_mg_per_dose / drug["concentration"]) * 5
+        max_ml = (max_mg_per_dose / drug["concentration"]) * 5
+
+        print("ยา: {}".format(drug["name"]))
+        print("  หน่วยขนาดยา: {}".format(drug["unit"]))
+        print("  ความถี่: {} ครั้ง/วัน".format(freq))
+        print("  ? ขนาดต่ำสุดต่อมื้อ: {:.2f} mg ? {:.2f} ml".format(min_mg_per_dose, min_ml))
+        print("  ? ขนาดสูงสุดต่อมื้อ: {:.2f} mg ? {:.2f} ml".format(max_mg_per_dose, max_ml))
+        print("-" * 60)
+
+
+# เรียกใช้งาน
+try:
+    weight_kg = float(input("กรุณาใส่น้ำหนักตัวเด็ก (kg): "))
+    calculate_dose(weight_kg)
+except ValueError:
+    print("กรุณาใส่น้ำหนักเป็นตัวเลข เช่น 12.5")
